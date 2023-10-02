@@ -8,4 +8,4 @@ This template should help get you started developing with Vue 3 in Vite. The tem
 
 
 ## Firebase Hosting
-- [](https://vue-3-98e29.web.app/)
+- [Link](https://vue-3-98e29.web.app/)
