@@ -5,9 +5,10 @@ import {
     signInWithEmailAndPassword,
     signOut,
 } from "firebase/auth";
-import { auth } from "../firebaseConfig.js";
+import { auth, db } from "../firebaseConfig.js";
 import router from "../router";
 import {userDatabaseStore} from './database.js';
+import { doc, getDoc, setDoc } from "firebase/firestore/lite";
 
 export const useUserStore = defineStore("userStore", {
     state: () => ({
@@ -41,7 +42,27 @@ export const useUserStore = defineStore("userStore", {
                     email,
                     password
                 );
-                this.userData = { email: user.email, uid: user.uid };
+                
+                const docRef = doc(db, 'users', user.uid);
+                const docSpan = await getDoc(docRef);
+                if(docSpan.exists()){
+                    this.userData = { ...docSpan.data() };
+                }else {
+                    await setDoc(docRef, {
+                        email: user.email, 
+                        uid: user.uid,
+                        displayName: user.displayName,
+                        photoURL: user.photoURL,
+                    });
+                    this.userData = {
+                        email: user.email, 
+                        uid: user.uid,
+                        displayName: user.displayName,
+                        photoURL: user.photoURL,
+                    }
+                }
+                console.log('userData : ' + this.userData);
+                // this.userData = { email: user.email, uid: user.uid };
                 router.push("/");
             } catch (error) {
                 console.log(error.code);
