@@ -33,8 +33,16 @@
 </template>
 
 <script setup>
+import { message } from 'ant-design-vue';
 import { useUserStore } from '../stores/user';
 
 const userStore = useUserStore();
-const onFinish = (value) => {};
+const onFinish = async(value) => {
+    const error = await userStore.updateUser(userStore.userData.displayName);
+    if(!error){
+        message.success('Se ha actualizado tu info correctamente.')
+    }else {
+        message.error('Ocurrio un error a la hora de actualizar tu perfil.')
+    }
+};
 </script>

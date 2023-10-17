@@ -4,6 +4,7 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut,
+  updateProfile,
 } from "firebase/auth";
 import { auth, db } from "../firebaseConfig.js";
 import router from "../router";
@@ -34,26 +35,29 @@ export const useUserStore = defineStore("userStore", {
         this.loadingUser = false;
       }
     },
+    async updateUser(displayName) {
+      try {
+        await updateProfile(auth.currentUser, {
+          displayName: displayName,
+        });
+        this.setUser(auth.currentUser);
+      } catch (error) {
+        console.log(error);
+        return error.code;
+      }
+    },
     async setUser(user) {
       try {
         const docRef = doc(db, "users", user.uid);
-        const docSpan = await getDoc(docRef);
-        if (docSpan.exists()) {
-          this.userData = { ...docSpan.data() };
-        } else {
-          await setDoc(docRef, {
-            email: user.email,
-            uid: user.uid,
-            displayName: user.displayName,
-            photoURL: user.photoURL,
-          });
-          this.userData = {
-            email: user.email,
-            uid: user.uid,
-            displayName: user.displayName,
-            photoURL: user.photoURL,
-          };
-        }
+
+        this.userData = {
+          email: user.email,
+          uid: user.uid,
+          displayName: user.displayName,
+          photoURL: user.photoURL,
+        };
+
+        await setDoc(docRef, this.userData);
       } catch (error) {
         console.log(error);
       }
@@ -79,9 +83,8 @@ export const useUserStore = defineStore("userStore", {
       const databaseStore = userDatabaseStore();
       databaseStore.$reset();
       try {
-        await signOut(auth);
-        this.userData = null;
         router.push("/login");
+        await signOut(auth);
       } catch (error) {
         console.log(error);
       }
@@ -92,7 +95,14 @@ export const useUserStore = defineStore("userStore", {
           auth,
           async (user) => {
             if (user) {
-              await this.setUser(user);
+              console.log(user);
+              // await this.setUser(user);
+              this.userData = {
+                email: user.email,
+                uid: user.uid,
+                displayName: user.displayName,
+                photoURL: user.photoURL,
+              };
             } else {
               this.userData = null;
               const databaseStore = useUserStore();
