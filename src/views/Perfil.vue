@@ -22,6 +22,17 @@
                 ]">
                     <a-input v-model:value="userStore.userData.displayName"></a-input>
                 </a-form-item>
+            
+                <a-upload 
+                v-model:file-list="fileList" 
+                list-type="picture"
+                :before-upload="beforeUpload" 
+                :max-count="1"
+                >
+                    <a-button class="mb-4" >Subir Foto de perfil</a-button>
+                </a-upload>
+
+
                 <a-form-item>
                     <a-button type="primary" html-type="submit" :disabled="userStore.loadingUser"
                         :loading="userStore.loadingUser">Actualizar información</a-button>
@@ -35,10 +46,24 @@
 <script setup>
 import { message } from 'ant-design-vue';
 import { useUserStore } from '../stores/user';
+import { ref } from 'vue';
+
+const fileList = ref([]);
+
+const beforeUpload = (file) => {
+    fileList.value = [...fileList.value, file]
+    return false;
+}
 
 const userStore = useUserStore();
+
 const onFinish = async(value) => {
     const error = await userStore.updateUser(userStore.userData.displayName);
+    
+    fileList.value.forEach(file => {
+        console.log(file);
+    });
+    
     if(!error){
         message.success('Se ha actualizado tu info correctamente.')
     }else {
