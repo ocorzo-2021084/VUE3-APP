@@ -22,15 +22,10 @@
                 ]">
                     <a-input v-model:value="userStore.userData.displayName"></a-input>
                 </a-form-item>
-            
-                <a-upload 
-                v-model:file-list="fileList" 
-                list-type="picture"
-                :before-upload="beforeUpload" 
-                :max-count="1"
-                @change="handleChange"
-                >
-                    <a-button class="mb-4" >Subir Foto de perfil</a-button>
+
+                <a-upload v-model:file-list="fileList" list-type="picture" :before-upload="beforeUpload" :max-count="1"
+                    @change="handleChange">
+                    <a-button class="mb-4">Subir Foto de perfil</a-button>
                 </a-upload>
 
 
@@ -64,11 +59,12 @@ const handleChange = (info) => {
 
     if (!isJpgOrPng) {
         message.error("Solo se aceptan imagenes JPG o PNG");
-        return handleRemove();
+        handleRemove(info.file);
+        return;
     }
 
     if (info.file.status !== 'uploading') {
-        console.log(info.file);
+        //console.log(info.file);
     }
 }
 
@@ -79,16 +75,20 @@ const beforeUpload = (file) => {
 
 const userStore = useUserStore();
 
-const onFinish = async(value) => {
+const onFinish = async () => {
     const error = await userStore.updateUser(userStore.userData.displayName);
-    
-    fileList.value.forEach(file => {
-        console.log(file);
-    });
-    
-    if(!error){
+
+    if (fileList.value[0]) {
+        const error = await userStore.updateImg(fileList.value[0]);
+        if (error) {
+            return message.error("No se pudo actualizar la foto de perfil");
+        }
+    }
+
+
+    if (!error) {
         message.success('Se ha actualizado tu info correctamente.')
-    }else {
+    } else {
         message.error('Ocurrio un error a la hora de actualizar tu perfil.')
     }
 };

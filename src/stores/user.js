@@ -6,10 +6,11 @@ import {
   signOut,
   updateProfile,
 } from "firebase/auth";
-import { auth, db } from "../firebaseConfig.js";
+import { auth, db, storage } from "../firebaseConfig.js";
 import router from "../router";
 import { userDatabaseStore } from "./database.js";
 import { doc, getDoc, setDoc } from "firebase/firestore/lite";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 export const useUserStore = defineStore("userStore", {
   state: () => ({
@@ -33,6 +34,20 @@ export const useUserStore = defineStore("userStore", {
         return error.code;
       } finally {
         this.loadingUser = false;
+      }
+    },
+    async updateImg(imagen) {
+      try {
+        console.log(imagen);
+        const storageRef = ref(storage, `${this.userData.uid}/perfil`);
+        await uploadBytes(storageRef, imagen.originFileObj);
+        const photoURL = await getDownloadURL(storageRef);
+        await updateProfile(auth.currentUser, {
+          photoURL: photoURL,
+        });
+      } catch (error) {
+        console.log(error);
+        return error.code;
       }
     },
     async updateUser(displayName) {
