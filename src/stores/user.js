@@ -45,6 +45,7 @@ export const useUserStore = defineStore("userStore", {
         await updateProfile(auth.currentUser, {
           photoURL: photoURL,
         });
+        this.setUser(auth.currentUser);
       } catch (error) {
         console.log(error);
         return error.code;

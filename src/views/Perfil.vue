@@ -1,5 +1,6 @@
 <template>
     <h1>Perfil de usuario</h1>
+    <a-avatar :src="userStore.userData.photoURL" :size="200"></a-avatar>
     <a-row>
         <a-col :xs="{ span: 24 }" :sm="{ span: 12, offset: 6 }">
             <!-- <a-card> -->
@@ -30,7 +31,7 @@
 
 
                 <a-form-item>
-                    <a-button type="primary" html-type="submit" :disabled="userStore.loadingUser"
+                    <a-button class="mt-4" type="primary" html-type="submit" :disabled="userStore.loadingUser"
                         :loading="userStore.loadingUser">Actualizar información</a-button>
                 </a-form-item>
             </a-form>
