@@ -28,6 +28,7 @@
                 list-type="picture"
                 :before-upload="beforeUpload" 
                 :max-count="1"
+                @change="handleChange"
                 >
                     <a-button class="mb-4" >Subir Foto de perfil</a-button>
                 </a-upload>
@@ -49,6 +50,27 @@ import { useUserStore } from '../stores/user';
 import { ref } from 'vue';
 
 const fileList = ref([]);
+
+const handleRemove = file => {
+    const index = fileList.value.indexOf(file);
+    const newFileList = fileList.value.slice();
+    newFileList.splice(index, 1);
+    fileList.value = newFileList;
+};
+
+const handleChange = (info) => {
+
+    const isJpgOrPng = info.file.type === 'image/jpeg' || info.file.type === 'image/png';
+
+    if (!isJpgOrPng) {
+        message.error("Solo se aceptan imagenes JPG o PNG");
+        return handleRemove();
+    }
+
+    if (info.file.status !== 'uploading') {
+        console.log(info.file);
+    }
+}
 
 const beforeUpload = (file) => {
     fileList.value = [...fileList.value, file]
