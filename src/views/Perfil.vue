@@ -1,6 +1,8 @@
 <template>
-    <h1>Perfil de usuario</h1>
-    <a-avatar :src="userStore.userData.photoURL" :size="200"></a-avatar>
+    <h1 class="text-center">Perfil de usuario</h1>
+    <div class="text-center mb-5">
+        <a-avatar :src="userStore.userData.photoURL" :size="200"></a-avatar>
+    </div>
     <a-row>
         <a-col :xs="{ span: 24 }" :sm="{ span: 12, offset: 6 }">
             <!-- <a-card> -->
@@ -24,14 +26,15 @@
                     <a-input v-model:value="userStore.userData.displayName"></a-input>
                 </a-form-item>
 
-                <a-upload v-model:file-list="fileList" list-type="picture" :before-upload="beforeUpload" :max-count="1"
-                    @change="handleChange">
-                    <a-button class="mb-4">Subir Foto de perfil</a-button>
-                </a-upload>
+                <div class="text-center">
+                    <a-upload v-model:file-list="fileList" list-type="picture" :before-upload="beforeUpload" :max-count="1"
+                        @change="handleChange">
+                        <a-button class="mb-2">Subir Foto de perfil</a-button>
+                    </a-upload>
+                </div>
 
-
-                <a-form-item>
-                    <a-button class="mt-4" type="primary" html-type="submit" :disabled="userStore.loadingUser"
+                <a-form-item class="text-center mt-5">
+                    <a-button class="mt-2" type="primary" html-type="submit" :disabled="userStore.loadingUser"
                         :loading="userStore.loadingUser">Actualizar información</a-button>
                 </a-form-item>
             </a-form>
@@ -94,3 +97,9 @@ const onFinish = async () => {
     }
 };
 </script>
+
+<style>
+.mt-5{
+    margin-top: 1rem;
+}
+</style>
