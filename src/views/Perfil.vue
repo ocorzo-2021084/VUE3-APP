@@ -80,15 +80,7 @@ const beforeUpload = (file) => {
 const userStore = useUserStore();
 
 const onFinish = async () => {
-    const error = await userStore.updateUser(userStore.userData.displayName);
-
-    if (fileList.value[0]) {
-        const error = await userStore.updateImg(fileList.value[0]);
-        if (error) {
-            return message.error("No se pudo actualizar la foto de perfil");
-        }
-    }
-
+    const error = await userStore.updateUser(userStore.userData.displayName, fileList.value[0]);
 
     if (!error) {
         message.success('Se ha actualizado tu info correctamente.')
