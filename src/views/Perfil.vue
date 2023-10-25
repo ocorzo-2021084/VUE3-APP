@@ -33,8 +33,8 @@
                     </a-upload>
                 </div>
 
-                <a-form-item class="text-center mt-5">
-                    <a-button class="mt-2" type="primary" html-type="submit" :disabled="userStore.loadingUser"
+                <a-form-item class="text-center mt-3">
+                    <a-button type="primary" html-type="submit" :disabled="userStore.loadingUser"
                         :loading="userStore.loadingUser">Actualizar información</a-button>
                 </a-form-item>
             </a-form>
@@ -91,7 +91,7 @@ const onFinish = async () => {
 </script>
 
 <style>
-.mt-5{
+.mt-5 {
     margin-top: 1rem;
 }
 </style>

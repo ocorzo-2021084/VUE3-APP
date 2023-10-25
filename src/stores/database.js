@@ -1,11 +1,11 @@
 import {
-  addDoc,
   collection,
   deleteDoc,
   doc,
   getDoc,
   getDocs,
   query,
+  setDoc,
   updateDoc,
   where,
 } from "firebase/firestore/lite";
@@ -19,9 +19,27 @@ export const userDatabaseStore = defineStore("database", {
   state: () => ({
     documents: [],
     loadingDoc: false,
-    loading: false
+    loading: false,
   }),
   actions: {
+    async getUrl(id) {
+      this.loadingDoc = true;
+      try {
+        const docRef = doc(db, "urls", id);
+        const docSnap = await getDoc(docRef);
+
+        if (!docSnap.exists()) {
+          return false;
+        }
+
+        return docSnap.data().name;
+      } catch (error) {
+        console.log(error.mesaage);
+        return false;
+      } finally {
+        this.loadingDoc = false;
+      }
+    },
     async getUrls() {
       if (this.documents.length !== 0) {
         return;
@@ -55,10 +73,10 @@ export const userDatabaseStore = defineStore("database", {
           short: nanoid(6),
           user: auth.currentUser.uid,
         };
-        const docRef = await addDoc(collection(db, "urls"), objetoDoc);
+        await setDoc(doc(db, "urls", objetoDoc.short), objetoDoc);
         this.documents.push({
           ...objetoDoc,
-          id: docRef.id,
+          id: objetoDoc.short,
         });
       } catch (error) {
         console.log(error.code);
@@ -106,15 +124,15 @@ export const userDatabaseStore = defineStore("database", {
         await updateDoc(docRef, {
           name: name,
         });
-        
+
         this.documents = this.documents.map((item) =>
           item.id == id ? { ...item, name: name } : item
         );
-        router.push('/');
+        router.push("/");
       } catch (error) {
         console.log(error.mesaage);
         return error.mesaage;
-      } finally{
+      } finally {
         this.loading = false;
       }
     },
